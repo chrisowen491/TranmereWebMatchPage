@@ -60,6 +60,10 @@ exports.handler = async function (event, context) {
     view.wingers2 = [];
     view.strikers = [];
     view.formattedGoals = formatGoals(view.goals);
+    if(view.attendance > 0) 
+      view.hasAttendance = true;
+    if(view.venue  && view.venue != 'Unknown') 
+      view.hasVenue = true;
 
     var noPositionList = [];
     for(var i=0; i < view.apps.length; i++) {

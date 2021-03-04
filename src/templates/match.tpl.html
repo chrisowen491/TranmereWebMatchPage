@@ -41,10 +41,15 @@
                                 <br/>
                                 <br/>
                                 {{/largeProgramme}}
-
+                                
+                                {{#hasVenue}}
                                 Venue: <strong>{{venue}}</strong>
-                                <br/>
-                                Attendance: <strong>{{attendance}}</strong>
+                                {{/hasVenue}}
+
+                                {{#hasAttendance}}
+                                    <br/>
+                                    Attendance: <strong>{{attendance}}</strong>
+                                {{/hasAttendance}}    
                                 <br/>
                                 Scorers: <strong>{{formattedGoals}}</strong>
                             </div>
