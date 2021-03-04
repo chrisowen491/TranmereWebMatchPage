@@ -70,14 +70,9 @@
                                 {{/hasAttendance}}    
                                 <br/>
                                 Scorers: <strong>{{formattedGoals}}</strong>
-                            </div>
-
-                        </aside>
-                        <article class="col-md-8 content-body tranmere-results">
-                            {{#pens}}<h4>{{pens}}</h4>{{/pens}}
-                            {{#youtube}}
-                            <div class="col-md-12" style= "padding-bottom:20px">
-                                <h4>Youtube</h4>
+                                {{#youtube}}
+                                <br/>
+                                <a href="{{youtube}}">You Tube Link</a>
                                 <video
                                     id="video"
                                     class="youtube video-js vjs-default-skin video-16-9"
@@ -86,9 +81,12 @@
                                     data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "{{youtube}}"}], "youtube": { "ytControls": 2 } }'
                                 >
                                 </video>
-                                <a href="{{youtube}}">You Tube Link</a>
+                                {{/youtube}}
                             </div>
-                            {{/youtube}}
+
+                        </aside>
+                        <article class="col-md-8 content-body tranmere-results">
+                            {{#pens}}<h4>{{pens}}</h4>{{/pens}}
                             <div class="col-md-12" style= "padding-bottom:20px">
                                 <h4>Team</h4>
                                 <table class="pitch">
