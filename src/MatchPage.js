@@ -32,23 +32,22 @@ exports.handler = async function (event, context) {
     view.goals = await getGoals(date, season);
     view.apps = await getApps(date, season);
     if(view.programme && view.programme != "#N/A") {
-
-        var smallBody = {
-            "bucket": 'trfc-programmes',
-            "key": view.programme,
-            "edits": {
-              "resize": {
-                "width": 100,
-                "fit": "contain"
-              }
-            }
-          };
-            var largeBody = {
-                "bucket": 'trfc-programmes',
-                "key": view.programme,
-              };
-              view.programme = Buffer.from(JSON.stringify(smallBody)).toString('base64');
-              view.largeProgramme = Buffer.from(JSON.stringify(largeBody)).toString('base64');
+      var smallBody = {
+        "bucket": 'trfc-programmes',
+        "key": view.programme,
+        "edits": {
+          "resize": {
+            "width": 100,
+            "fit": "contain"
+          }
+        }
+      };
+      var largeBody = {
+        "bucket": 'trfc-programmes',
+        "key": view.programme,
+      };
+      view.programme = Buffer.from(JSON.stringify(smallBody)).toString('base64');
+      view.largeProgramme = Buffer.from(JSON.stringify(largeBody)).toString('base64');
     } else {
         delete view.programme;
     }
@@ -66,9 +65,7 @@ exports.handler = async function (event, context) {
     for(var i=0; i < view.apps.length; i++) {
      var app = view.apps[i];
      if(playerMap[app.Name]) {
-
          app.bio = playerMap[view.apps[i].Name];
-
          if(app.bio.position == "Goalkeeper") {
              view.goalkeepers.push(app);
          } else if(app.bio.position == "Central Defender") {
