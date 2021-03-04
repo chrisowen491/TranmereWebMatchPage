@@ -59,15 +59,16 @@
                             {{#pens}}<h4>{{pens}}</h4>{{/pens}}
                             {{#youtube}}
                             <div class="col-md-12" style= "padding-bottom:20px">
-                                <h4>Video</h4>
+                                <h4>Youtube</h4>
                                 <video
-                                id="video"
-                                class="youtube video-js vjs-default-skin video-16-9"
-                                controls
-                                width="640" height="264"
-                                data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "{{youtube}}"}], "youtube": { "ytControls": 2 } }'
+                                    id="video"
+                                    class="youtube video-js vjs-default-skin video-16-9"
+                                    controls
+                                    width="640" height="264"
+                                    data-setup='{ "techOrder": ["youtube"], "sources": [{ "type": "video/youtube", "src": "{{youtube}}"}], "youtube": { "ytControls": 2 } }'
                                 >
                                 </video>
+                                <a href="{{youtube}}">You Tube Link</a>
                             </div>
                             {{/youtube}}
                             <div class="col-md-12" style= "padding-bottom:20px">
