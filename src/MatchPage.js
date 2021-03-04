@@ -31,7 +31,27 @@ exports.handler = async function (event, context) {
     var view = await getResults(season, date);
     view.goals = await getGoals(date, season);
     view.apps = await getApps(date, season);
+    if(view.programme && view.programme != "#N/A") {
 
+        var smallBody = {
+            "bucket": 'trfc-programmes',
+            "key": view.programme,
+            "edits": {
+              "resize": {
+                "width": 100,
+                "fit": "contain"
+              }
+            }
+          };
+            var largeBody = {
+                "bucket": 'trfc-programmes',
+                "key": view.programme,
+              };
+              view.programme = Buffer.from(JSON.stringify(smallBody)).toString('base64');
+              view.largeProgramme = Buffer.from(JSON.stringify(largeBody)).toString('base64');
+    } else {
+        delete view.programme;
+    }
     view.goalkeepers = [];
     view.fullback1 = [];
     view.fullback2 = [];
@@ -47,7 +67,7 @@ exports.handler = async function (event, context) {
      var app = view.apps[i];
      if(playerMap[app.Name]) {
 
-         app.bio = playerHash[view.apps[i].Name];
+         app.bio = playerMap[view.apps[i].Name];
 
          if(app.bio.position == "Goalkeeper") {
              view.goalkeepers.push(app);
@@ -106,10 +126,10 @@ exports.handler = async function (event, context) {
     view.midColspan  = 20 / (view.midfielders.length + view.wingers1.length + view.wingers2.length);
     view.strColspan = 20 / view.strikers.length;
     view.random = Math.ceil(Math.random() * 100000);
-    view.url = ""
+    view.url = `/match/${season}/${date}`
     view.title = "Match Summary";
     view.pageType = "AboutPage";
-    view.description = "MAtch Summary";
+    view.description = "Match Summary";
 
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
