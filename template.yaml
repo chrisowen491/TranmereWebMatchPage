@@ -1,0 +1,153 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  The tranmere web match page stack
+
+Globals:
+  Function:
+    Timeout: 3
+    AutoPublishAlias: live
+
+Parameters:
+  Deployment:
+    Type: String
+    Default: Canary10Percent5Minutes
+  S3BucketName:
+    Type: String
+  OpenAPIFile:
+    Type: String
+    Default: openapi.yaml
+  EnvName:
+    Type: String
+    Default: sit1
+    Description: The name of the environment to deploy to
+    AllowedValues:
+      - local
+      - ci1      
+      - sit1
+      - pre1
+      - prod1
+
+Resources:     
+
+  RestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Cors:
+        AllowOrigin: "'*'"
+      StageName: Prod
+      Name: MatchPage
+      Auth:
+        ApiKeyRequired: true
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: 
+              Fn::Join:
+              - ''
+              - - s3://
+                - Ref: S3BucketName
+                - /
+                - Ref: OpenAPIFile
+
+  MatchPage:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: MatchPage.handler
+      Runtime: nodejs12.x
+      DeploymentPreference:
+        Type: !Ref Deployment
+        Alarms:
+          - !Ref AliasErrorMetricGreaterThanZeroAlarm
+          - !Ref LatestVersionErrorMetricGreaterThanZeroAlarm
+      Tracing: Active  
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: TranmereWebAppsTable
+        - DynamoDBCrudPolicy:
+            TableName: TranmereWebGoalsTable
+        - DynamoDBCrudPolicy:
+            TableName: TranmereWebPlayerTable
+        - DynamoDBCrudPolicy:
+            TableName: TranmereWebGames      
+      Environment:
+        Variables:
+          EnvironmentName: !Ref EnvName
+      Events:
+        PageRequest:
+          Type: Api
+          Properties:
+            Path: /{season}/{date}
+            RestApiId: !Ref RestApi
+            Method: get
+
+  AliasErrorMetricGreaterThanZeroAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Lambda Function Error > 0
+      AlarmActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      OKActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      InsufficientDataActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: Resource
+          Value: !Sub "${ MatchPage}:live"
+        - Name: FunctionName
+          Value: !Ref MatchPage
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+  LatestVersionErrorMetricGreaterThanZeroAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Lambda Function Error > 0
+      AlarmActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      OKActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      InsufficientDataActions:
+        - !ImportValue cloudwatch-notifications-prod-SlackSNSTopic
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: Resource
+          Value: !Ref MatchPage.Version
+        - Name: FunctionName
+          Value: !Ref MatchPage
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+
+  # This shouldn't be necerssary, but API Gateway often seems to lack permission on the lambda when using swagger definitions
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:InvokeFunction
+      SourceArn: 
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/*/*
+      FunctionName: !Ref MatchPage
+      Principal: apigateway.amazonaws.com
+
+  StagingBasePathMapping:
+    DependsOn: RestApiProdStage
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: match
+      DomainName: !Sub "api.${EnvName}.tranmere-web.com"
+      RestApiId: !Ref RestApi
+      Stage: Prod
+
+Outputs:
+  Endpoint:
+    Description: "API Gateway endpoint URL the endpoint"
+    Value: !Sub "https://api.${EnvName}.tranmere-web.com/match/"

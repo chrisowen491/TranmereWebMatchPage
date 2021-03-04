@@ -1,0 +1,88 @@
+openapi: "3.0.1"
+info:
+  description: "The tranmere web match page stack"
+  version: "1.0"
+  title: "MatchPage"
+paths:
+  /{season}/{date}:
+    get:
+      parameters:    
+      - name: season
+        in: path
+        description: The season of the match 
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: path
+        description: The date of the match
+        required: true
+        schema:
+          type: string  
+      security:
+      - APIKeyHeader: [] 
+         
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: aws_proxy
+        responses:
+          default:
+            statusCode: "200"
+        uri:
+          Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MatchPage.Arn}/invocations
+
+
+x-amazon-apigateway-cors:
+  allowOrigins:
+    - '*'
+  allowMethods:
+    - GET
+    - OPTIONS
+    - POST
+  allowHeaders:
+    - x-amzm-header
+    - x-apigateway-header
+    - x-api-key
+    - authorization
+    - x-amz-date
+    - content-type
+    
+x-amazon-apigateway-gateway-responses:
+  ACCESS_DENIED:
+    statusCode: 403
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+  UNAUTHORIZED:
+    statusCode: 401
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+  DEFAULT_5XX:
+    statusCode: 500
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+  MISSING_AUTHENTICATION_TOKEN:
+    statusCode: 403
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+  INVALID_API_KEY:
+    statusCode: 200
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+      gatewayresponse.header.Access-Control-Allow-Headers: "'x-api-key,content-type'"
+  RESOURCE_NOT_FOUND:
+    statusCode: 404
+    responseParameters:
+      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+
+
+components:
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      name: x-api-Key
+      in: header   
+           

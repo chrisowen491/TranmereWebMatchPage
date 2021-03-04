@@ -1,0 +1,6 @@
+node_modules
+coverage
+.aws-sam
+src/package.json
+.nyc_output
+api-test-result.json

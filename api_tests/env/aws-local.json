@@ -1,0 +1,21 @@
+{
+	"id": "886144eb-13dd-47d8-81d8-eb7097840a47",
+	"name": "aws-test",
+	"values": [
+		{
+			"key": "domain",
+			"value": "localhost:3000",
+			"description": "",
+			"enabled": true
+        },
+		{
+			"key": "protocol",
+			"value": "http",
+			"description": "",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2018-11-15T10:59:31.343Z",
+	"_postman_exported_using": "Postman/6.5.2"
+}
