@@ -22,6 +22,7 @@ exports.handler = async function (event, context) {
     var pageName = "match"
     var date = event.pathParameters.date;
     var season = event.pathParameters.season;
+    var edit = event.queryStringParameters.edit;
 
     var squadSearch = await dynamo.scan({TableName:PLAYER_TABLE_NAME}).promise();
     var playerMap = {};
@@ -32,21 +33,10 @@ exports.handler = async function (event, context) {
     view.goals = await getGoals(date, season);
     view.apps = await getApps(date, season);
     if(view.programme && view.programme != "#N/A") {
-      var smallBody = {
-        "bucket": 'trfc-programmes',
-        "key": view.programme,
-        "edits": {
-          "resize": {
-            "width": 100,
-            "fit": "contain"
-          }
-        }
-      };
       var largeBody = {
         "bucket": 'trfc-programmes',
         "key": view.programme,
       };
-      view.programme = Buffer.from(JSON.stringify(smallBody)).toString('base64');
       view.largeProgramme = Buffer.from(JSON.stringify(largeBody)).toString('base64');
     } else {
         delete view.programme;
@@ -131,6 +121,9 @@ exports.handler = async function (event, context) {
     view.title = "Match Summary";
     view.pageType = "AboutPage";
     view.description = "Match Summary";
+
+    if(edit)
+      view.edit = true;
 
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
