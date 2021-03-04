@@ -35,6 +35,42 @@ paths:
         uri:
           Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MatchPage.Arn}/invocations
 
+    post:
+      requestBody:
+        description: The request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      parameters:    
+      - name: season
+        in: path
+        description: The season of the match 
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: path
+        description: The date of the match
+        required: true
+        schema:
+          type: string  
+      security:
+      - APIKeyHeader: [] 
+         
+      responses:
+        200:
+          description: Success
+          content: {}
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: aws_proxy
+        responses:
+          default:
+            statusCode: "200"
+        uri:
+          Fn::Sub: arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MatchUpdate.Arn}/invocations
+
 
 x-amazon-apigateway-cors:
   allowOrigins:
@@ -80,6 +116,16 @@ x-amazon-apigateway-gateway-responses:
 
 
 components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        youtube:
+          type: string
+        attendance:
+          type: string
+        programme:
+          type: string
   securitySchemes:
     APIKeyHeader:
       type: apiKey

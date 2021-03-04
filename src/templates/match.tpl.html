@@ -29,26 +29,28 @@
 <section class="match">
     <div class="container overlay-item-top">
         <div class="row">
+            {{#edit}}
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="youtube">Youtube</label>
+                    <input type="text" name="youtube" id="youtube" value="{{youtube}}"/>
+                </div>
+                <div class="form-group">
+                    <label for="attendance">Attendance</label>
+                    <input type="text" name="attendance" id="attendance" value="{{attendance}}"/>
+                </div>
+                <div class="form-group">
+                    <label for="programme">Programme</label>
+                    <input type="text" name="programme" id="programme" value="{{programme}}"/>
+                </div>
+                <button onclick="submitToAPI()" class="btn btn-primary px-3">Submit</button>
+            </div>
+            {{/edit}}
+        </div>
+        <div class="row">
             <div class="col">
                 <div class="content boxed">
-                    <div class="row separated">
-                        {{#edit}}
-                        <form >
-                            <div class="form-group">
-                                <label for="youtube">Youtube</label>
-                                <input type="text" name="youtube" id="youtube" value="{{youtube}}"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="attendance">Attendance</label>
-                                <input type="text" name="attendance" id="attendance" value="{{attendance}}"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="programme">Programme</label>
-                                <input type="text" name="programme" id="programme" value="{{programme}}"/>
-                            </div>
-                            <button  onclick="submitToAPI()" class="btn btn-primary px-3">Submit</button>
-                        </form>
-                        {{/edit}}
+                    <div class="row separated">    
                         <aside class="col-md-4 content-aside bg-light">
                             <div class="widget">
                                 {{#largeProgramme}}
@@ -165,6 +167,8 @@
 </section>
 
 {{>footer}}
+{{#edit}}
 <script src="/assets/js/match.js?r={{random}}"></script>
+{{/edit}}
 </body>
 </html>

@@ -83,6 +83,30 @@ Resources:
             RestApiId: !Ref RestApi
             Method: get
 
+
+  MatchUpdate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: MatchUpdate.handler
+      Runtime: nodejs12.x
+      DeploymentPreference:
+        Type: !Ref Deployment
+      Tracing: Active  
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: TranmereWebGames      
+      Environment:
+        Variables:
+          EnvironmentName: !Ref EnvName
+      Events:
+        PageRequest:
+          Type: Api
+          Properties:
+            Path: /{season}/{date}
+            RestApiId: !Ref RestApi
+            Method: post            
+
   AliasErrorMetricGreaterThanZeroAlarm:
     Type: "AWS::CloudWatch::Alarm"
     Properties:
@@ -136,6 +160,15 @@ Resources:
       SourceArn: 
         Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/*/*
       FunctionName: !Ref MatchPage
+      Principal: apigateway.amazonaws.com
+
+  LambdaUpdatePermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:InvokeFunction
+      SourceArn: 
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/*/*
+      FunctionName: !Ref MatchUpdate
       Principal: apigateway.amazonaws.com
 
   StagingBasePathMapping:
