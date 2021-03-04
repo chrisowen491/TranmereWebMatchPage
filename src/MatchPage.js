@@ -19,10 +19,10 @@ const GOALS_TABLE_NAME = "TranmereWebGoalsTable";
 const RESULTS_TABLE = "TranmereWebGames"
 
 exports.handler = async function (event, context) {
-    var pageName = "match"
+
     var date = event.pathParameters.date;
     var season = event.pathParameters.season;
-    var edit = event.queryStringParameters.edit;
+    var edit = event.queryStringParameters ? event.queryStringParameters.edit : null;
 
     var squadSearch = await dynamo.scan({TableName:PLAYER_TABLE_NAME}).promise();
     var playerMap = {};
@@ -38,7 +38,7 @@ exports.handler = async function (event, context) {
         "key": view.programme,
       };
       view.largeProgramme = Buffer.from(JSON.stringify(largeBody)).toString('base64');
-    } else {
+    } else if(!edit){
         delete view.programme;
     }
     view.goalkeepers = [];

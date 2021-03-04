@@ -21,7 +21,7 @@ exports.handler = async function (event, context) {
         UpdateExpression: "set programme = :p, attendance=:a, youtube=:y",
         ExpressionAttributeValues:{
             ":y": body.youtube,
-            ":a": body.attendance,
+            ":a": parseInt(body.attendance),
             ":p": body.programme
         },
         ReturnValues:"UPDATED_NEW"
