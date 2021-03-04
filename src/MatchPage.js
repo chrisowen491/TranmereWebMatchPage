@@ -24,13 +24,14 @@ exports.handler = async function (event, context) {
     var season = event.pathParameters.season;
 
     var squadSearch = await dynamo.scan({TableName:PLAYER_TABLE_NAME}).promise();
-    var playerHash = {};
-    for(var i=0; i < squadSearch.Items.length; i++) {
-        playerHash[squadSearch.Items[i].name] = squadSearch.Items[i];
-    }
-    var view = getResults(season, date);
-
     var playerMap = {};
+    for(var i=0; i < squadSearch.Items.length; i++) {
+      playerMap[squadSearch.Items[i].name] = squadSearch.Items[i];
+    }
+    var view = await getResults(season, date);
+    view.goals = await getGoals(date, season);
+    view.apps = await getApps(date, season);
+
     view.goalkeepers = [];
     view.fullback1 = [];
     view.fullback2 = [];
@@ -166,7 +167,7 @@ async function getResults(season, date) {
   }      
 
   var result = await dynamo.query(params).promise();
-  return result.Items;
+  return result.Items[0];
 };
 
 async function getGoals(date, season) {
