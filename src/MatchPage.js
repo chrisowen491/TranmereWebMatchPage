@@ -1,10 +1,5 @@
 const AWS = require('aws-sdk');
 const AWSXRay = require('aws-xray-sdk');
-const http = require('http');
-const https = require('https');
-AWSXRay.captureHTTPsGlobal(http);
-AWSXRay.captureHTTPsGlobal(https);
-
 let dynamo = new AWS.DynamoDB.DocumentClient();
 AWSXRay.captureAWSClient(dynamo.service);
 
