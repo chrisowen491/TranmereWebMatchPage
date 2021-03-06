@@ -37,8 +37,6 @@ Resources:
         AllowOrigin: "'*'"
       StageName: Prod
       Name: MatchPage
-      Auth:
-        ApiKeyRequired: true
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
