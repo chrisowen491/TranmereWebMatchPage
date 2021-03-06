@@ -56,7 +56,7 @@ paths:
         schema:
           type: string  
       security:
-      - APIKeyHeader: [] 
+      - MyUserPool: ["TranmereWeb/matches.read"] 
          
       responses:
         200:
@@ -131,4 +131,12 @@ components:
       type: apiKey
       name: x-api-Key
       in: header   
-           
+    MyUserPool: 
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs: 
+        - "arn:aws:cognito-idp:eu-west-1:559251280975:userpool/eu-west-1_GAF4md6wn"           
