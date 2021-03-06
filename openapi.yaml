@@ -83,6 +83,7 @@ x-amazon-apigateway-cors:
     - x-amzm-header
     - x-apigateway-header
     - x-api-key
+    - Authorization
     - authorization
     - x-amz-date
     - content-type
