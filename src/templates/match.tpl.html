@@ -29,8 +29,7 @@ NAV_BAR_PLACEHOLDER
 <section class="match">
     <div class="container overlay-item-top">
         <div class="row">
-            {{#edit}}
-            <div class="col-md-12">
+            <div class="col-md-12" id="edit" style="display: none;">
                 <div class="form-group">
                     <label for="youtube">Youtube</label>
                     <input type="text" name="youtube" id="youtube" value="{{youtube}}"/>
@@ -43,9 +42,8 @@ NAV_BAR_PLACEHOLDER
                     <label for="programme">Programme</label>
                     <input type="text" name="programme" id="programme" value="{{programme}}"/>
                 </div>
-                <button onclick="submitToAPI()" class="btn btn-primary px-3">Submit</button>
+                <button id="editbutton" class="btn btn-primary px-3">Submit</button>
             </div>
-            {{/edit}}
         </div>
         <div class="row">
             <div class="col">
@@ -165,8 +163,5 @@ NAV_BAR_PLACEHOLDER
 </section>
 
 {{>footer}}
-{{#edit}}
-<script src="/assets/js/match.js?r={{random}}"></script>
-{{/edit}}
 </body>
 </html>
