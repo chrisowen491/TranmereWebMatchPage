@@ -120,6 +120,7 @@ exports.handler = async function (event, context) {
     if(edit)
       view.edit = true;
 
+      
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
     return {
