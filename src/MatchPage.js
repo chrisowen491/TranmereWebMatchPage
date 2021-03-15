@@ -55,6 +55,17 @@ exports.handler = async function (event, context) {
      var app = view.apps[i];
      if(playerMap[app.Name]) {
          app.bio = playerMap[view.apps[i].Name];
+
+         if(app.bio.picLink) {
+             app.bio.pic = {
+                fields:{
+                    file:{
+                        url: app.bio.picLink
+                    }
+                }
+            }
+         }
+
          if(app.bio.position == "Goalkeeper") {
              view.goalkeepers.push(app);
          } else if(app.bio.position == "Central Defender") {
