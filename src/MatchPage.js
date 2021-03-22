@@ -13,7 +13,6 @@ const PLAYER_TABLE_NAME = "TranmereWebPlayerTable";
 const GOALS_TABLE_NAME = "TranmereWebGoalsTable";
 const RESULTS_TABLE = "TranmereWebGames"
 const re = /\/\d\d\d\d\//gm;
-const re2 = /\/\d\d\d\dgk\//gm;
 const re3 = /\/\d\d\d\d[A-Za-z]\//gm;
 const seasonMapping = {
     "1978": 1977,
@@ -33,12 +32,11 @@ exports.handler = async function (event, context) {
 
     var date = event.pathParameters.date;
     var season = event.pathParameters.season;
-    var edit = event.queryStringParameters ? event.queryStringParameters.edit : null;
 
     var squadSearch = await dynamo.scan({TableName:PLAYER_TABLE_NAME}).promise();
     var playerMap = {};
     for(var i=0; i < squadSearch.Items.length; i++) {
-      playerMap[squadSearch.Items[i].name] = squadSearch.Items[i];
+        playerMap[squadSearch.Items[i].name] = squadSearch.Items[i];
     }
     var view = await getResults(season, date);
     view.goals = await getGoals(date, season);
@@ -68,61 +66,63 @@ exports.handler = async function (event, context) {
 
     var noPositionList = [];
     for(var i=0; i < view.apps.length; i++) {
-     var app = view.apps[i];
-     if(playerMap[app.Name]) {
-         app.bio = playerMap[view.apps[i].Name];
+        var app = view.apps[i];
+        if(playerMap[app.Name]) {
+            app.bio = playerMap[view.apps[i].Name];
 
-         if(app.bio.picLink) {
-            var theSeason = season;
-            if(seasonMapping[season])
-                theSeason = seasonMapping[season]
-            app.bio.picLink = app.bio.picLink.replace(re, '/' + theSeason + '/');
-            app.bio.picLink = app.bio.picLink.replace(re3, '/' + theSeason + '/');
-         }
+            if(app.bio && app.bio.picLink) {
+                var theSeason = season;
+                if(seasonMapping[season])
+                    theSeason = seasonMapping[season]
+                app.bio.picLink = app.bio.picLink.replace(re, '/' + theSeason + '/');
+                app.bio.picLink = app.bio.picLink.replace(re3, '/' + theSeason + '/');
+            }
 
-         if(app.bio.position == "Goalkeeper") {
-             view.goalkeepers.push(app);
-         } else if(app.bio.position == "Central Defender") {
-             view.defenders.push(app);
-         } else if(app.bio.position == "Full Back" && view.fullback1.length == 0) {
-             view.fullback1.push(app);
-         } else if(app.bio.position == "Full Back" && view.fullback2.length == 0) {
-             view.fullback2.push(app);
-         } else if(app.bio.position == "Central Midfielder") {
-             view.midfielders.push(app);
-         } else if(app.bio.position == "Winger" && view.wingers1.length == 0) {
-             view.wingers1.push(app);
-         } else if(app.bio.position == "Winger" && view.wingers2.length == 0) {
-             view.wingers2.push(app);
-         } else if(app.bio.position == "Striker") {
-             view.strikers.push(app);
-         } else {
-             noPositionList.push(app)
-         }
-     } else {
-         app.bio.picLink = "https://images.ctfassets.net/pz711f8blqyy/1GOdp93iMC7T3l9L9UUqaM/0ea20a8950cdfb6f0239788f93747d74/blank.svg";
-         noPositionList.push(app);
-     }
+            if(app.bio.position == "Goalkeeper") {
+                view.goalkeepers.push(app);
+            } else if(app.bio.position == "Central Defender") {
+                view.defenders.push(app);
+            } else if(app.bio.position == "Full Back" && view.fullback1.length == 0) {
+                view.fullback1.push(app);
+            } else if(app.bio.position == "Full Back" && view.fullback2.length == 0) {
+                view.fullback2.push(app);
+            } else if(app.bio.position == "Central Midfielder") {
+                view.midfielders.push(app);
+            } else if(app.bio.position == "Winger" && view.wingers1.length == 0) {
+                view.wingers1.push(app);
+            } else if(app.bio.position == "Winger" && view.wingers2.length == 0) {
+                view.wingers2.push(app);
+            } else if(app.bio.position == "Striker") {
+                view.strikers.push(app);
+            } else {
+                noPositionList.push(app)
+            }
+        } else {
+            app.bio = {
+                picLink: "https://images.ctfassets.net/pz711f8blqyy/1GOdp93iMC7T3l9L9UUqaM/0ea20a8950cdfb6f0239788f93747d74/blank.svg"
+            }         
+            noPositionList.push(app);
+        }
     }
 
     for(var i=0; i < noPositionList.length; i++) {
-         if(view.goalkeepers.length == 0){
-             view.goalkeepers.push(noPositionList[i]);
-         } else if(view.fullback1.length == 0){
-               view.fullback1.push(noPositionList[i]);
-         } else if(view.fullback2.length == 0){
-               view.fullback2.push(noPositionList[i]);
-         } else if(view.defenders.length < 2){
-             view.defenders.push(noPositionList[i]);
-         } else if(view.wingers1.length == 0){
-               view.wingers1.push(noPositionList[i]);
-         } else if(view.wingers2.length == 0){
-               view.wingers2.push(noPositionList[i]);
-         } else if(view.midfielders.length < 2){
-             view.midfielders.push(noPositionList[i]);
-         } else {
-             view.strikers.push(noPositionList[i]);
-         }
+        if(view.goalkeepers.length == 0){
+            view.goalkeepers.push(noPositionList[i]);
+        } else if(view.fullback1.length == 0){
+            view.fullback1.push(noPositionList[i]);
+        } else if(view.fullback2.length == 0){
+            view.fullback2.push(noPositionList[i]);
+        } else if(view.defenders.length < 2){
+            view.defenders.push(noPositionList[i]);
+        } else if(view.wingers1.length == 0){
+            view.wingers1.push(noPositionList[i]);
+        } else if(view.wingers2.length == 0){
+            view.wingers2.push(noPositionList[i]);
+        } else if(view.midfielders.length < 2){
+            view.midfielders.push(noPositionList[i]);
+        } else {
+            view.strikers.push(noPositionList[i]);
+        }
     }
 
     view.defColspan  = 20 / (view.defenders.length + view.fullback1.length + view.fullback2.length);
@@ -133,106 +133,97 @@ exports.handler = async function (event, context) {
     view.title = "Match Summary";
     view.pageType = "AboutPage";
     view.description = "Match Summary";
-
-    if(edit)
-      view.edit = true;
-
       
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
     return {
-      "isBase64Encoded": false,
-      "headers": {
-        "Content-Type": "text/html",
-        "Content-Security-Policy" : "upgrade-insecure-requests",
-        "Strict-Transport-Security" : "max-age=1000",
-        "X-Xss-Protection" : "1; mode=block",
-        "X-Frame-Options" : "DENY",
-        "X-Content-Type-Options" : "nosniff",
-        "Referrer-Policy" : "strict-origin-when-cross-origin",
-        "Cache-Control": "public"
-      },
-      "statusCode": 200,
-      "body": page
-     };
+        "isBase64Encoded": false,
+        "headers": {
+            "Content-Type": "text/html",
+            "Content-Security-Policy" : "upgrade-insecure-requests",
+            "Strict-Transport-Security" : "max-age=1000",
+            "X-Xss-Protection" : "1; mode=block",
+            "X-Frame-Options" : "DENY",
+            "X-Content-Type-Options" : "nosniff",
+            "Referrer-Policy" : "strict-origin-when-cross-origin",
+            "Cache-Control": "public"
+        },
+        "statusCode": 200,
+        "body": page
+    };
 };
 
 function formatGoals(goals) {
-  var output = "";
-  var scorers = {};
-  for(var i=0; i < goals.length; i++) {
-      if(scorers[goals[i].Scorer]) {
-         scorers[goals[i].Scorer] =  scorers[goals[i].Scorer] + 1;
-      } else {
-         scorers[goals[i].Scorer] = 1;
-      }
-  }
-  const keys = Object.keys(scorers);
-  for( var x=0; x < keys.length; x++) {
-      if(scorers[keys[x]] > 1) {
-          output = output + keys[x] + " " + scorers[keys[x]];
-      } else {
-          output = output + keys[x]
-      }
-      if( x != keys.length-1) {
-          output = output + ", "
-      }
-  }
-  return output;
+    var output = "";
+    var scorers = {};
+    for(var i=0; i < goals.length; i++) {
+        if(scorers[goals[i].Scorer]) {
+            scorers[goals[i].Scorer] =  scorers[goals[i].Scorer] + 1;
+        } else {
+            scorers[goals[i].Scorer] = 1;
+        }
+    }
+    const keys = Object.keys(scorers);
+    for( var x=0; x < keys.length; x++) {
+        if(scorers[keys[x]] > 1) {
+            output = output + keys[x] + " " + scorers[keys[x]];
+        } else {
+            output = output + keys[x]
+        }
+        if( x != keys.length-1) {
+            output = output + ", "
+        }
+    }
+    return output;
 }
 
 async function getResults(season, date) {
 
-  var params = {
-    TableName : RESULTS_TABLE,
-    KeyConditionExpression:  "season = :season and #date = :date",
-    ExpressionAttributeValues: {
-      ":season": decodeURIComponent(season),
-      ":date": decodeURIComponent(date)
-    },
-    ExpressionAttributeNames: { "#date": "date" }
-  }      
-
-  var result = await dynamo.query(params).promise();
-  return result.Items[0];
+    var params = {
+        TableName : RESULTS_TABLE,
+        KeyConditionExpression:  "season = :season and #date = :date",
+        ExpressionAttributeValues: {
+        ":season": decodeURIComponent(season),
+        ":date": decodeURIComponent(date)
+        },
+        ExpressionAttributeNames: { "#date": "date" }
+    }      
+    var result = await dynamo.query(params).promise();
+    return result.Items[0];
 };
 
 async function getGoals(date, season) {
 
-  var params = {
-      TableName : GOALS_TABLE_NAME,
-      KeyConditionExpression :  "Season = :season",
-      FilterExpression : "#Date = :date",
-      ExpressionAttributeNames : {
-          "#Date" : "Date"
-      },
-      ExpressionAttributeValues: {
-          ":date" : decodeURIComponent(date),
-          ":season" : decodeURIComponent(season)
-      }
-  }
-
-  var result = await dynamo.query(params).promise();
-
-  return result.Items;
+    var params = {
+        TableName : GOALS_TABLE_NAME,
+        KeyConditionExpression :  "Season = :season",
+        FilterExpression : "#Date = :date",
+        ExpressionAttributeNames : {
+            "#Date" : "Date"
+        },
+        ExpressionAttributeValues: {
+            ":date" : decodeURIComponent(date),
+            ":season" : decodeURIComponent(season)
+        }
+    }
+    var result = await dynamo.query(params).promise();
+    return result.Items;
 };
 
 async function getApps(date, season) {
 
-  var params = {
-      TableName : APPS_TABLE_NAME,
-      KeyConditionExpression :  "Season = :season",
-      FilterExpression : "#Date = :date",
-      ExpressionAttributeNames : {
-          "#Date" : "Date"
-      },
-      ExpressionAttributeValues: {
-          ":date" : decodeURIComponent(date),
-          ":season" : decodeURIComponent(season)
-      }
-  }
-
-  var result = await dynamo.query(params).promise();
-
-  return result.Items;
+    var params = {
+        TableName : APPS_TABLE_NAME,
+        KeyConditionExpression :  "Season = :season",
+        FilterExpression : "#Date = :date",
+        ExpressionAttributeNames : {
+            "#Date" : "Date"
+        },
+        ExpressionAttributeValues: {
+            ":date" : decodeURIComponent(date),
+            ":season" : decodeURIComponent(season)
+        }
+    }
+    var result = await dynamo.query(params).promise();
+    return result.Items;
 };
