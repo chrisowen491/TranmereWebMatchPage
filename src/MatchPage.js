@@ -12,6 +12,22 @@ const APPS_TABLE_NAME = "TranmereWebAppsTable";
 const PLAYER_TABLE_NAME = "TranmereWebPlayerTable";
 const GOALS_TABLE_NAME = "TranmereWebGoalsTable";
 const RESULTS_TABLE = "TranmereWebGames"
+const re = /\/\d\d\d\d\//gm;
+const re2 = /\/\d\d\d\dgk\//gm;
+const re3 = /\/\d\d\d\d[A-Za-z]\//gm;
+const seasonMapping = {
+    "1978": 1977,
+    "1984": 1983,
+    "1990": 1989,
+    "1992": 1991,
+    "1994": 1993,
+    "1996": 1995,
+    "1998": 1997,
+    "2001": 2000,
+    "2003": 2002,
+    "2005": 2004,
+    "2008": 2007
+}
 
 exports.handler = async function (event, context) {
 
@@ -57,13 +73,11 @@ exports.handler = async function (event, context) {
          app.bio = playerMap[view.apps[i].Name];
 
          if(app.bio.picLink) {
-             app.bio.pic = {
-                fields:{
-                    file:{
-                        url: app.bio.picLink
-                    }
-                }
-            }
+            var theSeason = season;
+            if(seasonMapping[season])
+                theSeason = seasonMapping[season]
+            app.bio.picLink = app.bio.picLink.replace(re, '/' + theSeason + '/');
+            app.bio.picLink = app.bio.picLink.replace(re3, '/' + theSeason + '/');
          }
 
          if(app.bio.position == "Goalkeeper") {
@@ -86,15 +100,7 @@ exports.handler = async function (event, context) {
              noPositionList.push(app)
          }
      } else {
-         app.bio = {
-             pic: {
-                  fields:{
-                      file:{
-                          url:"https://images.ctfassets.net/pz711f8blqyy/1GOdp93iMC7T3l9L9UUqaM/0ea20a8950cdfb6f0239788f93747d74/blank.svg"
-                      }
-                  }
-              }
-         }     ;
+         app.bio.picLink = "https://images.ctfassets.net/pz711f8blqyy/1GOdp93iMC7T3l9L9UUqaM/0ea20a8950cdfb6f0239788f93747d74/blank.svg";
          noPositionList.push(app);
      }
     }
