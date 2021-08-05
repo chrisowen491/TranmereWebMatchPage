@@ -1,11 +1,12 @@
 const AWS = require('aws-sdk');
+const AWSXRay = require('aws-xray-sdk');
 let dynamo = new AWS.DynamoDB.DocumentClient();
+AWSXRay.captureAWSClient(dynamo.service);
 
 var Mustache = require("mustache");
 var fs = require("fs");
 var path = require('path');
 var utils = require('./libs/utils')(path,fs,Mustache);
-var playerMap = {};
 
 const APPS_TABLE_NAME = "TranmereWebAppsTable";
 const PLAYER_TABLE_NAME = "TranmereWebPlayerTable";
@@ -31,14 +32,6 @@ exports.handler = async function (event, context) {
 
     var date = event.pathParameters.date;
     var season = event.pathParameters.season;
-
-    if(!playerMap["John Aldridge"]) {
-        var squadSearch = await dynamo.scan({TableName:PLAYER_TABLE_NAME}).promise();
-        for(var i=0; i < squadSearch.Items.length; i++) {
-            playerMap[squadSearch.Items[i].name] = squadSearch.Items[i];
-        }
-    }
-
     var view = await getResults(season, date);
     view.goals = await getGoals(date, season);
     view.apps = await getApps(date, season);
@@ -68,8 +61,10 @@ exports.handler = async function (event, context) {
     var noPositionList = [];
     for(var i=0; i < view.apps.length; i++) {
         var app = view.apps[i];
-        if(playerMap[app.Name]) {
-            app.bio = playerMap[view.apps[i].Name];
+        var player = await getPlayerByName(app.Name); 
+
+        if(player) {
+            app.bio = player;
 
             if(app.bio && app.bio.picLink) {
                 var theSeason = season;
@@ -177,6 +172,22 @@ function formatGoals(goals) {
     }
     return output;
 }
+
+async function getPlayerByName(name) {
+
+    var params = {
+        TableName : PLAYER_TABLE_NAME,
+        KeyConditionExpression:  "#name = :name",
+        IndexName: "ByNameIndex",
+        ExpressionAttributeValues: {
+        ":name": decodeURIComponent(name)
+        },
+        ExpressionAttributeNames: { "#name": "name" }
+    }      
+    var result = await dynamo.query(params).promise();
+    return result.Items[0];
+};
+
 
 async function getResults(season, date) {
 

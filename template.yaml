@@ -1,5 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
+Transform:
+  - AWS::Serverless-2016-10-31
+  - Name: DatadogServerless
+    Parameters:
+      stackName: !Ref "AWS::StackName"
+      addLayers: false
+      env: !Ref EnvName
+      site: datadoghq.eu
+      
 Description: >
   The tranmere web match page stack
 
@@ -54,13 +62,14 @@ Resources:
     Properties:
       CodeUri: src
       Handler: MatchPage.handler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
+      MemorySize: 256
       DeploymentPreference:
         Type: !Ref Deployment
         Alarms:
           - !Ref AliasErrorMetricGreaterThanZeroAlarm
           - !Ref LatestVersionErrorMetricGreaterThanZeroAlarm
-      Tracing: Active  
+      Tracing: PassThrough  
       Policies:
         - DynamoDBCrudPolicy:
             TableName: TranmereWebAppsTable
@@ -87,10 +96,11 @@ Resources:
     Properties:
       CodeUri: src
       Handler: MatchUpdate.handler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
+      MemorySize: 256
       DeploymentPreference:
         Type: !Ref Deployment
-      Tracing: Active  
+      Tracing: PassThrough  
       Policies:
         - DynamoDBCrudPolicy:
             TableName: TranmereWebGames      
