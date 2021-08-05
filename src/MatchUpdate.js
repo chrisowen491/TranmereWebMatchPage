@@ -1,9 +1,5 @@
 const AWS = require('aws-sdk');
-const AWSXRay = require('aws-xray-sdk');
-
 let dynamo = new AWS.DynamoDB.DocumentClient();
-AWSXRay.captureAWSClient(dynamo.service);
-
 const RESULTS_TABLE = "TranmereWebGames"
 
 exports.handler = async function (event, context) {

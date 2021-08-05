@@ -74,7 +74,7 @@ jobs:
         run: aws s3 cp openapi.yaml s3://${{ secrets.AWS_DEPLOY_BUCKET }}/${{ github.repository }}/openapi-${{ steps.generate-uuid.outputs.uuid }}.yaml             
       - name: SAM Deploy
         run:
-          sam deploy --template packaged-template.yaml --tags env=$ENV_NAME --no-fail-on-empty-changeset --stack-name MatchPage-$ENV_NAME --s3-bucket ${{ secrets.AWS_DEPLOY_BUCKET }} --s3-prefix ${{ github.repository }} --parameter-overrides EnvName=ci1 S3BucketName=${{ secrets.AWS_DEPLOY_BUCKET }} OpenAPIFile=${{ github.repository }}/openapi-${{ steps.generate-uuid.outputs.uuid }}.yaml Deployment=AllAtOnce --capabilities CAPABILITY_IAM
+          sam deploy --template packaged-template.yaml --tags env=$ENV_NAME version=${{needs.build_test_and_package.outputs.tag}} --no-fail-on-empty-changeset --stack-name MatchPage-$ENV_NAME --s3-bucket ${{ secrets.AWS_DEPLOY_BUCKET }} --s3-prefix ${{ github.repository }} --parameter-overrides EnvName=ci1 S3BucketName=${{ secrets.AWS_DEPLOY_BUCKET }} OpenAPIFile=${{ github.repository }}/openapi-${{ steps.generate-uuid.outputs.uuid }}.yaml Deployment=AllAtOnce --capabilities CAPABILITY_IAM
 
 #  acceptance_test:
 #    runs-on: ubuntu-latest
