@@ -1,5 +1,7 @@
 const AWS = require('aws-sdk');
+const AWSXRay = require('aws-xray-sdk');
 let dynamo = new AWS.DynamoDB.DocumentClient();
+AWSXRay.captureAWSClient(dynamo.service);
 
 var Mustache = require("mustache");
 var fs = require("fs");
