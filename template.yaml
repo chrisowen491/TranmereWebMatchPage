@@ -4,9 +4,10 @@ Transform:
   - Name: DatadogServerless
     Parameters:
       stackName: !Ref "AWS::StackName"
-      addLayers: false
+      addLayers: true
       env: !Ref EnvName
       site: datadoghq.eu
+      nodeLayerVersion: 59
       
 Description: >
   The tranmere web match page stack
