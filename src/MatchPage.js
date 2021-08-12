@@ -149,7 +149,7 @@ exports.handler = async function (event, context) {
             "X-Frame-Options" : "DENY",
             "X-Content-Type-Options" : "nosniff",
             "Referrer-Policy" : "strict-origin-when-cross-origin",
-            "Cache-Control": "Cache-Control: public, max-age=" + maxAge
+            "Cache-Control": "public, max-age=" + maxAge
         },
         "statusCode": 200,
         "body": page
