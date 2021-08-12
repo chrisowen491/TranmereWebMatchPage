@@ -6,7 +6,6 @@ Transform:
       stackName: !Ref "AWS::StackName"
       addLayers: true
       env: !Ref EnvName
-      site: datadoghq.eu
       nodeLayerVersion: 59
       
 Description: >

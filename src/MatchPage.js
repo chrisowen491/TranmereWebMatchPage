@@ -137,6 +137,8 @@ exports.handler = async function (event, context) {
       
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
+    var maxAge = season == 2021 ? 86400 : 2592000;
+
     return {
         "isBase64Encoded": false,
         "headers": {
@@ -147,7 +149,7 @@ exports.handler = async function (event, context) {
             "X-Frame-Options" : "DENY",
             "X-Content-Type-Options" : "nosniff",
             "Referrer-Policy" : "strict-origin-when-cross-origin",
-            "Cache-Control": "public"
+            "Cache-Control": "Cache-Control: public, max-age=" + maxAge
         },
         "statusCode": 200,
         "body": page
