@@ -15,14 +15,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"let jsonData = pm.response.json();",
-									"",
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									""
 								],
-								"type": "text/html"
+								"type": "text/javascript"
 							}
 						}
 					],
