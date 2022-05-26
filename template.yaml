@@ -6,6 +6,7 @@ Transform:
       stackName: !Ref "AWS::StackName"
       addLayers: true
       env: !Ref EnvName
+      forwarderArn: "arn:aws:lambda:<REGION>:<ACCOUNT-ID>:function:datadog-forwarder"
       nodeLayerVersion: 78
       service: !Ref Service
       version: !Ref Version
