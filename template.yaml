@@ -6,7 +6,9 @@ Transform:
       stackName: !Ref "AWS::StackName"
       addLayers: true
       env: !Ref EnvName
-      nodeLayerVersion: 59
+      nodeLayerVersion: 78
+      service: !Ref Service
+      version: !Ref Version
       
 Description: >
   The tranmere web match page stack
@@ -25,6 +27,10 @@ Parameters:
   OpenAPIFile:
     Type: String
     Default: openapi.yaml
+  Version:
+    Type: String
+  Service:
+    Type: String       
   EnvName:
     Type: String
     Default: sit1

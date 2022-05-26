@@ -6,86 +6,13 @@ on:
       - main
 
 env:
-  ENV_NAME: ci1      
+  ENV_NAME: ci1
 
 jobs:
-  build_test_and_package:
-    runs-on: ubuntu-latest
-    outputs:
-      tag:
-        ${{steps.tag_repo.outputs.new_tag}}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install
-        run: npm install
-      - name: Build
-        run: npm run build
-        
-      - name: Configure AWS credentials
-        id: creds
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'eu-west-1'
-      - name: SAM Package
-        run: sam package --output-template-file packaged-template.yaml --s3-prefix ${{ github.repository }} --s3-bucket ${{ secrets.AWS_DEPLOY_BUCKET }}
-      - name: Archive template
-        uses: actions/upload-artifact@v2
-        with:
-          name: sam-template
-          path: |
-            packaged-template.yaml
-            openapi.yaml
-            api_tests/postman-collection.json
-            api_tests/env/aws-*.json
-      - name: Bump version and push tag
-        id: tag_repo
-        uses: anothrNick/github-tag-action@1.26.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true  
-          RELEASE_BRANCHES: .* 
-          INITIAL_VERSION: v1.0.0             
-
-  ci-deploy:
-    runs-on: ubuntu-latest
-    needs: build_test_and_package
-    environment:   
-      name: ci1
-      url: https://api.ci1.tranmere-web.com/match/    
-    steps:
-      - uses: actions/checkout@v2
-      - name: Configure AWS credentials
-        id: creds
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'eu-west-1'
-      - name: Download sam template
-        uses: actions/download-artifact@v2
-        with:
-          name: sam-template  
-      - name: Set UUID
-        id: generate-uuid
-        uses: filipstefansson/uuid-action@v1      
-      - name: OpenAPI Upload
-        run: aws s3 cp openapi.yaml s3://${{ secrets.AWS_DEPLOY_BUCKET }}/${{ github.repository }}/openapi-${{ steps.generate-uuid.outputs.uuid }}.yaml             
-      - name: SAM Deploy
-        run:
-          sam deploy --template packaged-template.yaml --tags env=$ENV_NAME service=${{ github.repository }} version=${{needs.build_test_and_package.outputs.tag}} --no-fail-on-empty-changeset --stack-name MatchPage-$ENV_NAME --s3-bucket ${{ secrets.AWS_DEPLOY_BUCKET }} --s3-prefix ${{ github.repository }} --parameter-overrides EnvName=ci1 S3BucketName=${{ secrets.AWS_DEPLOY_BUCKET }} OpenAPIFile=${{ github.repository }}/openapi-${{ steps.generate-uuid.outputs.uuid }}.yaml Deployment=AllAtOnce --capabilities CAPABILITY_IAM
-
-#  acceptance_test:
-#    runs-on: ubuntu-latest
-#    needs: ci-deploy
-#    steps:
-#      - name: Download sam template
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: sam-template 
-#      - name: Post Deploy Checks
-#        run: 
-#          npm install newman && node ./node_modules/newman/bin/newman run ./api_tests/postman-collection.json -e ./api_tests/env/aws-$ENV_NAME.json --env-var "testApiKey=${{ secrets.API_KEY }}"
-
-       
+  call-workflow:
+    uses: chrisowen491/ReusableActions/.github/workflows/build_deploy_test_lambda_via_sam.yaml@main
+    with:
+      env: ci1
+      stack_name: MatchPage-ci1
+      base_url: https://api.ci1.tranmere-web.com/match/
+    secrets: inherit
