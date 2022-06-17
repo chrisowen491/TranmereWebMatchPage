@@ -34,3 +34,33 @@
 
 <script src="/assets/js/vendor.min.js?r={{random}}"></script>
 <script src="/assets/js/app.js?r={{random}}"></script>
+<script>
+function search(or) {
+  $(`#${or}-five-loading`).show();
+  $(`#${or}-five-content`).hide();
+  var dateobj = new Date();
+  var base = window.location.hostname == "www.tranmere-web.com" ? 'https://www.tranmere-web.com' : "https://www.tranmere-web.com";
+  var url = base + `/result-search/?season={{season}}&date={{date}}&or=${or}` 
+              + '&c=' + dateobj.getDate();
+  $.getJSON(url, function(data) {
+    var view = {
+        results: data
+    };
+    $.get("/assets/templates/results.mustache", function(template) {
+      var article = Mustache.render( template, view );
+      $(`#${or}-five-content`).html(article);
+      $(`#${or}-five-loading`).hide();
+      $(`#${or}-five-content`).show();
+    });
+  });
+}
+$.urlParam = function (name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.search);
+    return (results !== null) ? results[1] || 0 : false;
+}
+
+$(document).ready(function() {
+    search('next');
+    search('previous');
+});
+</script>

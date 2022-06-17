@@ -4,10 +4,16 @@
 	"values": [
 		{
 			"key": "domain",
-			"value": "localhost:3000",
+			"value": "127.0.0.1:3000",
 			"description": "",
 			"enabled": true
         },
+		{
+			"key": "basePath",
+			"value": "2020/2021-03-14",
+			"description": "",
+			"enabled": true
+		},
 		{
 			"key": "protocol",
 			"value": "http",

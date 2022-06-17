@@ -134,6 +134,8 @@ exports.handler = async function (event, context) {
     view.title = "Match Summary";
     view.pageType = "AboutPage";
     view.description = "Match Summary";
+    view.date = date;
+    view.season = season;
       
     var page = utils.buildPage(view, './templates/match.tpl.html');
 
