@@ -65,7 +65,36 @@ NAV_BAR_PLACEHOLDER
                                 {{#hasAttendance}}
                                     <br/>
                                     Attendance: <strong>{{attendance}}</strong>
-                                {{/hasAttendance}}    
+                                {{/hasAttendance}}
+                                <br/>
+                                Rovers:
+                                <strong>
+                                {{#goalkeepers}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/goalkeepers}}
+
+                                {{#fullback1}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/fullback1}}
+                                {{#defenders}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/defenders}}
+                                {{#fullback2}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/fullback2}}
+                                {{#wingers1}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/wingers1}}
+                                {{#midfielders}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/midfielders}}
+                                {{#wingers2}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/wingers2}}
+                                {{#strikers}}
+                                {{Name}}{{#SubbedBy}} ({{SubbedBy}} {{SubTime}}){{/SubbedBy}}<br />
+                                {{/strikers}}
+                                </strong>
                                 <br/>
                                 Scorers: <strong>{{formattedGoals}}</strong>
                                 {{#youtube}}
@@ -89,8 +118,34 @@ NAV_BAR_PLACEHOLDER
                                 <h4>Team</h4>
                                 <table class="pitch">
                                     <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>    
+                                    <tr>
                                         {{#goalkeepers}}
-                                        <td colspan="20">
+                                        <td colspan="24">
                                             <a href="/page/player/{{Name}}"><img src="{{bio.picLink}}"></a>
                                             <a href="/page/player/{{Name}}" class="{{#YellowCard}}yellow{{/YellowCard}} {{#RedCard}}red{{/RedCard}}">{{Name}}</a>
                                             {{#SubbedBy}}<a href="/page/player/{{SubbedBy}}" class="{{#SubYellow}}yellow{{/SubYellow}} {{#SubRed}}red{{/SubRed}}">({{SubbedBy}} {{SubTime}})</a>{{/SubbedBy}}

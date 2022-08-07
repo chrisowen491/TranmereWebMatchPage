@@ -126,9 +126,9 @@ exports.handler = async function (event, context) {
         }
     }
 
-    view.defColspan  = 20 / (view.defenders.length + view.fullback1.length + view.fullback2.length);
-    view.midColspan  = 20 / (view.midfielders.length + view.wingers1.length + view.wingers2.length);
-    view.strColspan = 20 / view.strikers.length;
+    view.defColspan  = Math.floor(24 / (view.defenders.length + view.fullback1.length + view.fullback2.length));
+    view.midColspan  = Math.floor(24 / (view.midfielders.length + view.wingers1.length + view.wingers2.length));
+    view.strColspan = Math.floor(24 / view.strikers.length);
     view.random = Math.ceil(Math.random() * 100000);
     view.url = `/match/${season}/${date}`
     view.title = "Match Summary";
