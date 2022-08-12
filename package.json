@@ -21,7 +21,7 @@
     "mocha": "^8.2.1",
     "newman": "^5.2.2",
     "nyc": "^15.1.0",
-    "yargs": "^16.2.0"
+    "yargs": "^17.5.1"
   },
   "eslintConfig": {
     "env": {
