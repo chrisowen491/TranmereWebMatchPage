@@ -63,4 +63,33 @@ $(document).ready(function() {
     search('next');
     search('previous');
 });
+$(document).on('click', '#editbutton2', function() {
+
+    var data = {
+        programme : $("#programme").val(),
+        attendance : $("#attendance").val(),
+        youtube : $("#youtube").val(),
+        home : $("#home").val(),
+        away : $("#away").val(),
+        opposition : $("#opposition").val(),
+        pens : $("#pens").val(),
+        venue : $("#venue").val()
+    };
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        crossDomain: "true",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        headers: {
+        "Authorization": window.auth.getCachedSession().getAccessToken().getJwtToken()
+        },
+        success: function () {
+        window.location.href =  window.location.href + "?v=" + Math.floor(Math.random() * 10);
+        },
+        error: function () {
+        alert('fail')
+        }});
+});
 </script>
