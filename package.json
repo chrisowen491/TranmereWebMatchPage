@@ -14,7 +14,7 @@
     "mustache": "^4.0.1"
   },
   "devDependencies": {
-    "aws-sdk": "^2.815.0",
+    "aws-sdk": "^2.1209.0",
     "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "marked": ">=4.0.18",
