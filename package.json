@@ -16,7 +16,7 @@
   "devDependencies": {
     "aws-sdk": "^2.1282.0",
     "chai": "^4.3.7",
-    "eslint": "^8.30.0",
+    "eslint": "^8.31.0",
     "marked": ">=4.0.18",
     "mocha": "^10.0.0",
     "newman": "^5.3.2",
